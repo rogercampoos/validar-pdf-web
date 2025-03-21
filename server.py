@@ -96,6 +96,10 @@ def index():
             if excel_file.filename == '' or pdf_file.filename == '':
                 raise ValueError("Nenhum arquivo selecionado")
             
+            # Obter os nomes dos arquivos
+            excel_filename = secure_filename(excel_file.filename)
+            pdf_filename = secure_filename(pdf_file.filename)
+            
             # Processa arquivos para extrair patrimônios
             patrimonios_excel = extrair_patrimonios_excel(excel_file)
             patrimonios_pdf = extrair_patrimonios_pdf(pdf_file)
@@ -112,7 +116,9 @@ def index():
                 'somente_pdf': sorted(list(somente_pdf)),
                 'total_excel': len(patrimonios_excel),
                 'total_pdf': len(patrimonios_pdf),
-                'total_ambos': len(patrimonios_ambos)
+                'total_ambos': len(patrimonios_ambos),
+                'excel_filename': excel_filename,
+                'pdf_filename': pdf_filename
             }
             
             # Gerar DataFrames
@@ -174,7 +180,9 @@ def index():
                         'total_somente_excel': len(somente_excel),
                         'total_somente_pdf': len(somente_pdf),
                         'exemplos_excel': exemplos_para_exibir,
-                        'mostrar_exemplos': len(somente_pdf) > 0
+                        'mostrar_exemplos': len(somente_pdf) > 0,
+                        'excel_filename': excel_filename,
+                        'pdf_filename': pdf_filename
                     }
                 })
             
