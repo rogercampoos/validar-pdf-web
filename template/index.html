@@ -3,73 +3,87 @@
 <head>
     <title>Validador de Patrimônios</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>Validador de Patrimônios</h1>
-            <div class="version">Versão 1.0</div>
+            <div class="version">Versão 1.1</div>
         </div>
 
         <div class="content">
+            <div id="resultado-container" class="result-section" style="display: none;">
+                <h2>Resultados da Validação</h2>
+                <div id="resumo-validacao">
+                    <p class="resultado-titulo">Encontrados <span id="total-excel">0</span> patrimônios no Excel</p>
+                    
+                    <div class="resultados-detalhes">
+                        <p>RESULTADOS DA VALIDAÇÃO:</p>
+                        <p>Patrimônios em ambas as fontes: <span id="total-ambos">0</span></p>
+                        <p>Patrimônios apenas no PDF: <span id="total-pdf">0</span></p>
+                        <p>Patrimônios apenas no Excel: <span id="total-excel-only">0</span></p>
+                    </div>
+                    
+                    <div id="exemplos-container" class="exemplos-section">
+                        <p>Exemplos de patrimônios que estão apenas no Excel:</p>
+                        <ul id="exemplos-lista"></ul>
+                    </div>
+                </div>
+                <button id="novo-validador" class="btn">Nova Validação</button>
+                <div id="download-info" class="download-info">
+                    <p>O download do arquivo com os resultados completos começará automaticamente.</p>
+                    <p>Se não iniciar, <a id="download-link" href="#">clique aqui</a>.</p>
+                </div>
+            </div>
+
             <form id="uploadForm" enctype="multipart/form-data">
-                <!-- Área Excel -->
-                <div class="drop-area" id="excelDropArea">
-                    <span>Arraste a planilha aqui ou</span>
-                    <input type="file" id="excelInput" name="excel" accept=".xlsx,.xls,.ods" hidden>
-                    <button type="button" class="btn" onclick="document.getElementById('excelInput').click()">
-                        Selecionar Planilha
-                    </button>
-                    <div id="excelFileName"></div>
-                </div>
+                <div id="form-content">
+                    <!-- Área para Planilha -->
+                    <div class="drop-area" id="excelDropArea">
+                        <img src="{{ url_for('static', filename='excel-icon.png') }}" alt="Excel" class="file-icon" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2NjMDAwMCI+PHBhdGggZD0iTTE0IDJIMWExIDEgMCAwIDAtMSAxdjE4YTEgMSAwIDAgMCAxIDFoMjJhMSAxIDAgMCAwIDEtMVY4VjdabTUgMTZoLTh2MUg1VjVoN3YzaDd2MTBabS0zLTloLTRWNWw0IDR6Ij48L3BhdGg+PC9zdmc+'; this.style.width='36px';">
+                        <span>Arraste a planilha Excel/ODS aqui ou</span>
+                        <input type="file" id="excelInput" name="excel" accept=".xlsx,.xls,.ods" hidden>
+                        <button type="button" class="btn" onclick="document.getElementById('excelInput').click()">
+                            Selecionar Planilha
+                        </button>
+                        <div id="excelFileName" class="file-name"></div>
+                    </div>
 
-                <!-- Área PDF -->
-                <div class="drop-area" id="pdfDropArea">
-                    <span>Arraste o PDF aqui ou</span>
-                    <input type="file" id="pdfInput" name="pdf" accept=".pdf" hidden>
-                    <button type="button" class="btn" onclick="document.getElementById('pdfInput').click()">
-                        Selecionar PDF
-                    </button>
-                    <div id="pdfFileName"></div>
-                </div>
+                    <!-- Área para PDF -->
+                    <div class="drop-area" id="pdfDropArea">
+                        <img src="{{ url_for('static', filename='pdf-icon.png') }}" alt="PDF" class="file-icon" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2NjMDAwMCI+PHBhdGggZD0iTTIwIDJIOGMtMS4xIDAtMiAuOS0yIDJ2MTJjMCAxLjEuOSAyIDIgMmgxMmMxLjEgMCAyLS45IDItMlY0YzAtMS4xLS45LTItMi0yek00IDRjLTEuMSAwLTIgLjktMiAydjE0YzAgMS4xLjkgMiAyIDJoMTRjMS4xIDAgMi0uOSAyLTJ2LTJIOGMtMi4yIDAtNC0xLjgtNC00VjR6Ij48L3BhdGg+PC9zdmc+'; this.style.width='36px';">
+                        <span>Arraste o arquivo PDF aqui ou</span>
+                        <input type="file" id="pdfInput" name="pdf" accept=".pdf" hidden>
+                        <button type="button" class="btn" onclick="document.getElementById('pdfInput').click()">
+                            Selecionar PDF
+                        </button>
+                        <div id="pdfFileName" class="file-name"></div>
+                    </div>
 
-                <button type="submit" class="btn btn-processar">▶ Processar Arquivos</button>
-                
-                {% if error %}
-                    <div class="error-message">{{ error }}</div>
-                {% endif %}
+                    <div class="submit-area">
+                        <button type="submit" id="validateBtn" class="btn btn-validate" disabled>
+                            ▶ Validar Patrimônios
+                        </button>
+                        <div id="loading" class="loading" style="display: none;">
+                            <div class="spinner"></div>
+                            <span>Processando...</span>
+                        </div>
+                    </div>
+                </div>
             </form>
+
+            <div id="error-container" class="error-container" style="display: none;">
+                <div class="error-message"></div>
+                <button id="try-again" class="btn">Tentar Novamente</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // Drag and Drop e manipulação de arquivos
-        function handleFileSelect(inputId, fileNameDiv) {
-            const file = document.getElementById(inputId).files[0];
-            if (file) {
-                document.getElementById(fileNameDiv).textContent = file.name;
-            }
-        }
-
-        // Event listeners para os inputs
-        document.getElementById('excelInput').addEventListener('change', () => 
-            handleFileSelect('excelInput', 'excelFileName'));
-        
-        document.getElementById('pdfInput').addEventListener('change', () => 
-            handleFileSelect('pdfInput', 'pdfFileName'));
-
-        // Drag and Drop
-        function handleDrop(e, inputId, fileNameDiv) {
-            e.preventDefault();
-            const file = e.dataTransfer.files[0];
-            const input = document.getElementById(inputId);
-            input.files = e.dataTransfer.files;
-            handleFileSelect(inputId, fileNameDiv);
-        }
-
-        // Configurar áreas de drop
-        ['excelDropArea', 'pdfDropArea'].forEach(id => {
-            const area = document.getElementById(id);
+        // Configuração do Drag and Drop
+        function setupDropArea(areaId, inputId, fileNameDiv) {
+            const area = document.getElementById(areaId);
             
             area.ondragover = (e) => {
                 e.preventDefault();
@@ -80,36 +94,180 @@
                 area.classList.remove('dragover');
             };
             
-            area.ondrop = (e) => handleDrop(e, 
-                id === 'excelDropArea' ? 'excelInput' : 'pdfInput',
-                id === 'excelDropArea' ? 'excelFileName' : 'pdfFileName'
-            );
+            area.ondrop = (e) => {
+                e.preventDefault();
+                area.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                document.getElementById(inputId).files = e.dataTransfer.files;
+                document.getElementById(fileNameDiv).textContent = file.name;
+                checkFormValid();
+            };
+        }
+
+        // Inicializar áreas
+        setupDropArea('excelDropArea', 'excelInput', 'excelFileName');
+        setupDropArea('pdfDropArea', 'pdfInput', 'pdfFileName');
+
+        // Atualizar nome dos arquivos selecionados
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            input.addEventListener('change', function() {
+                const fileNameDiv = this.id === 'excelInput' ? 'excelFileName' : 'pdfFileName';
+                document.getElementById(fileNameDiv).textContent = this.files[0]?.name || '';
+                checkFormValid();
+            });
         });
 
-        // Enviar formulário
+        // Verificar se ambos os arquivos foram selecionados para habilitar o botão
+        function checkFormValid() {
+            const excelFile = document.getElementById('excelInput').files[0];
+            const pdfFile = document.getElementById('pdfInput').files[0];
+            const validateBtn = document.getElementById('validateBtn');
+            
+            validateBtn.disabled = !(excelFile && pdfFile);
+            
+            if (validateBtn.disabled) {
+                validateBtn.classList.remove('btn-active');
+            } else {
+                validateBtn.classList.add('btn-active');
+            }
+        }
+
+        // Mostrar resultados
+        function showResults(data) {
+            document.getElementById('form-content').style.display = 'none';
+            document.getElementById('resultado-container').style.display = 'block';
+            
+            // Preencher valores
+            document.getElementById('total-excel').textContent = data.total_excel;
+            document.getElementById('total-ambos').textContent = data.total_ambos;
+            document.getElementById('total-pdf').textContent = data.total_somente_pdf;
+            document.getElementById('total-excel-only').textContent = data.total_somente_excel;
+            
+            // Controlar exibição dos exemplos
+            const exemplosContainer = document.getElementById('exemplos-container');
+            
+            // Mostrar exemplos somente se houver patrimônios apenas no PDF
+            if (data.mostrar_exemplos && data.exemplos_excel && data.exemplos_excel.length > 0) {
+                const exemplosLista = document.getElementById('exemplos-lista');
+                exemplosLista.innerHTML = '';
+                
+                data.exemplos_excel.forEach(exemplo => {
+                    const li = document.createElement('li');
+                    li.textContent = '- ' + exemplo;
+                    exemplosLista.appendChild(li);
+                });
+                exemplosContainer.style.display = 'block';
+            } else {
+                exemplosContainer.style.display = 'none';
+            }
+        }
+
+        // Mostrar erro
+        function showError(errorMessage) {
+            document.getElementById('form-content').style.display = 'none';
+            document.getElementById('error-container').style.display = 'block';
+            document.getElementById('error-container').querySelector('.error-message').textContent = errorMessage;
+        }
+
+        // Reiniciar formulário
+        function resetForm() {
+            document.getElementById('uploadForm').reset();
+            document.getElementById('excelFileName').textContent = '';
+            document.getElementById('pdfFileName').textContent = '';
+            document.getElementById('validateBtn').disabled = true;
+            document.getElementById('validateBtn').classList.remove('btn-active');
+            
+            document.getElementById('form-content').style.display = 'block';
+            document.getElementById('resultado-container').style.display = 'none';
+            document.getElementById('error-container').style.display = 'none';
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        // Botões para reiniciar
+        document.getElementById('novo-validador').addEventListener('click', resetForm);
+        document.getElementById('try-again').addEventListener('click', resetForm);
+
+        // Envio do formulário
         document.getElementById('uploadForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
             
+            // Mostrar loading
+            document.getElementById('loading').style.display = 'flex';
+            document.getElementById('validateBtn').disabled = true;
+            
             try {
+                // Usando fetch com cabeçalho AJAX
                 const response = await fetch('/', {
                     method: 'POST',
-                    body: formData
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
                 });
                 
+                // Esconder loading
+                document.getElementById('loading').style.display = 'none';
+                
                 if (response.ok) {
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'resultado_validacao.xlsx';
-                    a.click();
+                    const contentType = response.headers.get('Content-Type');
+                    
+                    if (contentType && contentType.includes('application/json')) {
+                        // Resposta JSON (resumo)
+                        const jsonData = await response.json();
+                        
+                        if (jsonData.success) {
+                            showResults(jsonData.resumo);
+                            
+                            // Fazer uma segunda requisição para baixar o arquivo
+                            const downloadResponse = await fetch('/', {
+                                method: 'POST',
+                                body: formData
+                            });
+                            
+                            if (downloadResponse.ok) {
+                                const blob = await downloadResponse.blob();
+                                const url = window.URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = 'resultado_validacao.xlsx';
+                                document.body.appendChild(a);
+                                a.click();
+                                document.body.removeChild(a);
+                                
+                                // Configurar link de backup para download
+                                document.getElementById('download-link').href = url;
+                            } else {
+                                throw new Error('Erro ao gerar o arquivo de download');
+                            }
+                        } else {
+                            showError(jsonData.erro || 'Erro na validação');
+                        }
+                    } else {
+                        // Resposta direta (arquivo)
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'resultado_validacao.xlsx';
+                        a.click();
+                        
+                        // Mostrar mensagem genérica de sucesso
+                        showResults({
+                            total_excel: 'N/A',
+                            total_ambos: 'N/A',
+                            total_somente_pdf: 'N/A',
+                            total_somente_excel: 'N/A',
+                            exemplos_excel: []
+                        });
+                    }
                 } else {
-                    const error = await response.text();
-                    alert(`Erro: ${error}`);
+                    showError('Erro no servidor: ' + response.status);
                 }
             } catch (error) {
-                alert('Erro na requisição');
+                document.getElementById('loading').style.display = 'none';
+                showError('Erro na requisição: ' + error.message);
+                console.error('Erro:', error);
             }
         });
     </script>
