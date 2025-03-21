@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Validador de Patrimônios</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Validador de Patrimônios</h1>
+            <div class="version">Versão 1.0</div>
+        </div>
+
+        <div class="content">
+            <form id="uploadForm" enctype="multipart/form-data">
+                <!-- Área Excel -->
+                <div class="drop-area" id="excelDropArea">
+                    <span>Arraste a planilha aqui ou</span>
+                    <input type="file" id="excelInput" name="excel" accept=".xlsx,.xls,.ods" hidden>
+                    <button type="button" class="btn" onclick="document.getElementById('excelInput').click()">
+                        Selecionar Planilha
+                    </button>
+                    <div id="excelFileName"></div>
+                </div>
+
+                <!-- Área PDF -->
+                <div class="drop-area" id="pdfDropArea">
+                    <span>Arraste o PDF aqui ou</span>
+                    <input type="file" id="pdfInput" name="pdf" accept=".pdf" hidden>
+                    <button type="button" class="btn" onclick="document.getElementById('pdfInput').click()">
+                        Selecionar PDF
+                    </button>
+                    <div id="pdfFileName"></div>
+                </div>
+
+                <button type="submit" class="btn btn-processar">▶ Processar Arquivos</button>
+                
+                {% if error %}
+                    <div class="error-message">{{ error }}</div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Drag and Drop e manipulação de arquivos
+        function handleFileSelect(inputId, fileNameDiv) {
+            const file = document.getElementById(inputId).files[0];
+            if (file) {
+                document.getElementById(fileNameDiv).textContent = file.name;
+            }
+        }
+
+        // Event listeners para os inputs
+        document.getElementById('excelInput').addEventListener('change', () => 
+            handleFileSelect('excelInput', 'excelFileName'));
+        
+        document.getElementById('pdfInput').addEventListener('change', () => 
+            handleFileSelect('pdfInput', 'pdfFileName'));
+
+        // Drag and Drop
+        function handleDrop(e, inputId, fileNameDiv) {
+            e.preventDefault();
+            const file = e.dataTransfer.files[0];
+            const input = document.getElementById(inputId);
+            input.files = e.dataTransfer.files;
+            handleFileSelect(inputId, fileNameDiv);
+        }
+
+        // Configurar áreas de drop
+        ['excelDropArea', 'pdfDropArea'].forEach(id => {
+            const area = document.getElementById(id);
+            
+            area.ondragover = (e) => {
+                e.preventDefault();
+                area.classList.add('dragover');
+            };
+            
+            area.ondragleave = () => {
+                area.classList.remove('dragover');
+            };
+            
+            area.ondrop = (e) => handleDrop(e, 
+                id === 'excelDropArea' ? 'excelInput' : 'pdfInput',
+                id === 'excelDropArea' ? 'excelFileName' : 'pdfFileName'
+            );
+        });
+
+        // Enviar formulário
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            try {
+                const response = await fetch('/', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'resultado_validacao.xlsx';
+                    a.click();
+                } else {
+                    const error = await response.text();
+                    alert(`Erro: ${error}`);
+                }
+            } catch (error) {
+                alert('Erro na requisição');
+            }
+        });
+    </script>
+</body>
+</html>
