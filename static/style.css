@@ -115,6 +115,11 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    min-height: 20px; /* Altura mínima para garantir que o espaço seja reservado */
+    padding: 5px;
+    display: block; /* Garantir que seja um bloco visível */
+    visibility: visible !important; /* Forçar visibilidade */
+    opacity: 1 !important; /* Garantir opacidade total */
 }
 
 /* Área de Submit */
@@ -155,6 +160,33 @@ body {
     margin: 20px 0;
     border: 1px solid #ffd6d6;
     transition: all 0.3s ease;
+}
+
+/* Informações dos arquivos na seção de resultados */
+.file-names {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #eee;
+}
+
+.file-names div {
+    margin: 8px 0;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-label {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.file-value {
+    color: #cc0000;
+    font-weight: 600;
 }
 
 .resultado-titulo {
@@ -245,4 +277,19 @@ body {
     }
     
     .btn {
-        padding: 10px
+        padding: 10px 15px;
+        font-size: 12px;
+    }
+    
+    .file-name {
+        font-size: 12px;
+    }
+    
+    .file-names {
+        padding: 8px;
+    }
+    
+    .file-names div {
+        font-size: 12px;
+    }
+}
