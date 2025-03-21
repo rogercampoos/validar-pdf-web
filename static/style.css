@@ -4,6 +4,7 @@ body {
     margin: 0;
     padding: 20px;
     background: #f5f5f5;
+    color: #333;
 }
 
 .container {
@@ -12,6 +13,7 @@ body {
     background: white;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    overflow: hidden;
 }
 
 .header {
@@ -22,20 +24,36 @@ body {
     text-align: center;
 }
 
-/* Áreas de Drag and Drop - Nova Estilização */
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.header .version {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-top: 5px;
+}
+
+.content {
+    padding: 20px;
+}
+
+/* Áreas de Drag and Drop - Estilo Unificado */
 .drop-area {
     border: 2px dashed #ffd6d6;
     border-radius: 8px;
     padding: 30px;
     text-align: center;
     margin: 20px 0;
-    background: #fff3f3;  /* Fundo vermelho claro */
+    background: #fff3f3;
     transition: all 0.3s ease;
     min-height: 150px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
 .drop-area.dragover {
@@ -44,15 +62,13 @@ body {
     box-shadow: 0 0 15px rgba(204,0,0,0.1);
 }
 
-/* Texto e Elementos nas Áreas */
-.drop-area span {
-    color: #666;
-    font-size: 16px;
+.file-icon {
+    width: 48px;
+    height: 48px;
     margin-bottom: 15px;
-    display: block;
 }
 
-/* Botões */
+/* Botões e Texto */
 .btn {
     background: #cc0000;
     color: white;
@@ -61,44 +77,172 @@ body {
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
-    transition: background 0.3s;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    transition: all 0.3s;
+    display: inline-block;
+    text-align: center;
 }
 
-.btn:hover {
+.btn:hover:not(:disabled) {
     background: #b30000;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
 }
 
-/* Área de Resultados (Mantido do Sistema Anterior) */
-.resultados {
-    background: #fff3f3;
-    padding: 20px;
-    border-radius: 8px;
-    margin-top: 25px;
-    border: 1px solid #ffd6d6;
+.btn:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
-.resultados h3 {
-    color: #cc0000;
-    margin-top: 0;
-}
-
-/* Mensagem de Erro */
-.error-message {
-    background: #ffebeb;
-    border: 1px solid #cc0000;
-    color: #cc0000;
+.btn-validate {
+    width: 100%;
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: bold;
     padding: 15px;
-    border-radius: 6px;
-    margin: 20px 0;
 }
 
-/* Nome do Arquivo Selecionado */
-#excelFileName, #pdfFileName {
+.btn-active {
+    background: #cc0000;
+    box-shadow: 0 4px 8px rgba(204,0,0,0.2);
+}
+
+/* Nome dos Arquivos */
+.file-name {
     color: #cc0000;
     margin-top: 10px;
     font-weight: bold;
-    font-size: 14px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
+
+/* Área de Submit */
+.submit-area {
+    text-align: center;
+    position: relative;
+    margin-top: 30px;
+}
+
+/* Loading Spinner */
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 4px solid #cc0000;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Seção de Resultados */
+.result-section {
+    background: #fff3f3;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border: 1px solid #ffd6d6;
+    transition: all 0.3s ease;
+}
+
+.resultado-titulo {
+    font-size: 18px;
+    font-weight: bold;
+    color: #cc0000;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.resultados-detalhes {
+    background: #333;
+    color: #fff;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.resultados-detalhes p {
+    margin: 5px 0;
+}
+
+.exemplos-section {
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.exemplos-section p {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.exemplos-section ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.exemplos-section li {
+    margin: 5px 0;
+}
+
+/* Download Info */
+.download-info {
+    font-size: 13px;
+    color: #666;
+    margin-top: 20px;
+    text-align: center;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 5px;
+}
+
+.download-info a {
+    color: #cc0000;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Error Container */
+.error-container {
+    text-align: center;
+    padding: 20px;
+    background: #fff3f3;
+    border: 1px solid #ffd6d6;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.error-message {
+    color: #cc0000;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+/* Responsivo */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+    
+    .container {
+        max-width: 100%;
+    }
+    
+    .drop-area {
+        padding: 20px 10px;
+        min-height: 120px;
+    }
+    
+    .btn {
+        padding: 10px
