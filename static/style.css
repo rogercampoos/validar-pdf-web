@@ -1,0 +1,104 @@
+/* Estilos Gerais */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: #f5f5f5;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.header {
+    background: #cc0000;
+    color: white;
+    padding: 20px;
+    border-radius: 8px 8px 0 0;
+    text-align: center;
+}
+
+/* Áreas de Drag and Drop - Nova Estilização */
+.drop-area {
+    border: 2px dashed #ffd6d6;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    margin: 20px 0;
+    background: #fff3f3;  /* Fundo vermelho claro */
+    transition: all 0.3s ease;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.drop-area.dragover {
+    background: #ffe6e6;
+    border-color: #cc0000;
+    box-shadow: 0 0 15px rgba(204,0,0,0.1);
+}
+
+/* Texto e Elementos nas Áreas */
+.drop-area span {
+    color: #666;
+    font-size: 16px;
+    margin-bottom: 15px;
+    display: block;
+}
+
+/* Botões */
+.btn {
+    background: #cc0000;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn:hover {
+    background: #b30000;
+    transform: translateY(-1px);
+}
+
+/* Área de Resultados (Mantido do Sistema Anterior) */
+.resultados {
+    background: #fff3f3;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 25px;
+    border: 1px solid #ffd6d6;
+}
+
+.resultados h3 {
+    color: #cc0000;
+    margin-top: 0;
+}
+
+/* Mensagem de Erro */
+.error-message {
+    background: #ffebeb;
+    border: 1px solid #cc0000;
+    color: #cc0000;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 20px 0;
+}
+
+/* Nome do Arquivo Selecionado */
+#excelFileName, #pdfFileName {
+    color: #cc0000;
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 14px;
+}
