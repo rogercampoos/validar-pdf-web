@@ -9,22 +9,26 @@
     <div class="container">
         <div class="header">
             <h1>Validador de Patrimônios</h1>
-            <div class="version">Versão 1.1</div>
+            <div class="version">Versão 1.3</div>
         </div>
 
         <div class="content">
             <div id="resultado-container" class="result-section" style="display: none;">
                 <h2>Resultados da Validação</h2>
+                <div id="file-names" class="file-names">
+                    <div><span class="file-label">Excel:</span> <span id="excel-filename" class="file-value"></span></div>
+                    <div><span class="file-label">PDF:</span> <span id="pdf-filename" class="file-value"></span></div>
+                </div>
                 <div id="resumo-validacao">
                     <p class="resultado-titulo">Encontrados <span id="total-excel">0</span> patrimônios no Excel</p>
-                    
+
                     <div class="resultados-detalhes">
                         <p>RESULTADOS DA VALIDAÇÃO:</p>
                         <p>Patrimônios em ambas as fontes: <span id="total-ambos">0</span></p>
                         <p>Patrimônios apenas no PDF: <span id="total-pdf">0</span></p>
                         <p>Patrimônios apenas no Excel: <span id="total-excel-only">0</span></p>
                     </div>
-                    
+
                     <div id="exemplos-container" class="exemplos-section">
                         <p>Exemplos de patrimônios que estão apenas no Excel:</p>
                         <ul id="exemplos-lista"></ul>
@@ -84,16 +88,16 @@
         // Configuração do Drag and Drop
         function setupDropArea(areaId, inputId, fileNameDiv) {
             const area = document.getElementById(areaId);
-            
+
             area.ondragover = (e) => {
                 e.preventDefault();
                 area.classList.add('dragover');
             };
-            
+
             area.ondragleave = () => {
                 area.classList.remove('dragover');
             };
-            
+
             area.ondrop = (e) => {
                 e.preventDefault();
                 area.classList.remove('dragover');
@@ -122,9 +126,9 @@
             const excelFile = document.getElementById('excelInput').files[0];
             const pdfFile = document.getElementById('pdfInput').files[0];
             const validateBtn = document.getElementById('validateBtn');
-            
+
             validateBtn.disabled = !(excelFile && pdfFile);
-            
+
             if (validateBtn.disabled) {
                 validateBtn.classList.remove('btn-active');
             } else {
@@ -136,21 +140,25 @@
         function showResults(data) {
             document.getElementById('form-content').style.display = 'none';
             document.getElementById('resultado-container').style.display = 'block';
-            
+
+            // Exibir nomes dos arquivos
+            document.getElementById('excel-filename').textContent = data.excel_filename || 'N/A';
+            document.getElementById('pdf-filename').textContent = data.pdf_filename || 'N/A';
+
             // Preencher valores
             document.getElementById('total-excel').textContent = data.total_excel;
             document.getElementById('total-ambos').textContent = data.total_ambos;
             document.getElementById('total-pdf').textContent = data.total_somente_pdf;
             document.getElementById('total-excel-only').textContent = data.total_somente_excel;
-            
+
             // Controlar exibição dos exemplos
             const exemplosContainer = document.getElementById('exemplos-container');
-            
+
             // Mostrar exemplos somente se houver patrimônios apenas no PDF
             if (data.mostrar_exemplos && data.exemplos_excel && data.exemplos_excel.length > 0) {
                 const exemplosLista = document.getElementById('exemplos-lista');
                 exemplosLista.innerHTML = '';
-                
+
                 data.exemplos_excel.forEach(exemplo => {
                     const li = document.createElement('li');
                     li.textContent = '- ' + exemplo;
@@ -176,7 +184,7 @@
             document.getElementById('pdfFileName').textContent = '';
             document.getElementById('validateBtn').disabled = true;
             document.getElementById('validateBtn').classList.remove('btn-active');
-            
+
             document.getElementById('form-content').style.display = 'block';
             document.getElementById('resultado-container').style.display = 'none';
             document.getElementById('error-container').style.display = 'none';
@@ -191,11 +199,11 @@
         document.getElementById('uploadForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
-            
+
             // Mostrar loading
             document.getElementById('loading').style.display = 'flex';
             document.getElementById('validateBtn').disabled = true;
-            
+
             try {
                 // Usando fetch com cabeçalho AJAX
                 const response = await fetch('/', {
@@ -205,26 +213,26 @@
                         'X-Requested-With': 'XMLHttpRequest'
                     }
                 });
-                
+
                 // Esconder loading
                 document.getElementById('loading').style.display = 'none';
-                
+
                 if (response.ok) {
                     const contentType = response.headers.get('Content-Type');
-                    
+
                     if (contentType && contentType.includes('application/json')) {
                         // Resposta JSON (resumo)
                         const jsonData = await response.json();
-                        
+
                         if (jsonData.success) {
                             showResults(jsonData.resumo);
-                            
+
                             // Fazer uma segunda requisição para baixar o arquivo
                             const downloadResponse = await fetch('/', {
                                 method: 'POST',
                                 body: formData
                             });
-                            
+
                             if (downloadResponse.ok) {
                                 const blob = await downloadResponse.blob();
                                 const url = window.URL.createObjectURL(blob);
@@ -234,7 +242,7 @@
                                 document.body.appendChild(a);
                                 a.click();
                                 document.body.removeChild(a);
-                                
+
                                 // Configurar link de backup para download
                                 document.getElementById('download-link').href = url;
                             } else {
@@ -251,7 +259,7 @@
                         a.href = url;
                         a.download = 'resultado_validacao.xlsx';
                         a.click();
-                        
+
                         // Mostrar mensagem genérica de sucesso
                         showResults({
                             total_excel: 'N/A',
