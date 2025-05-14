@@ -266,29 +266,29 @@ body {
     body {
         padding: 10px;
     }
-    
+
     .container {
         max-width: 100%;
     }
-    
+
     .drop-area {
         padding: 20px 10px;
         min-height: 120px;
     }
-    
+
     .btn {
         padding: 10px 15px;
         font-size: 12px;
     }
-    
+
     .file-name {
         font-size: 12px;
     }
-    
+
     .file-names {
         padding: 8px;
     }
-    
+
     .file-names div {
         font-size: 12px;
     }
