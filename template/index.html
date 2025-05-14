@@ -9,7 +9,7 @@
     <div class="container">
         <div class="header">
             <h1>Validador de Patrimônios</h1>
-            <div class="version">Versão 1.3</div>
+            <div class="version">Versão 2.1</div> <!-- Versão atualizada -->
         </div>
 
         <div class="content">
@@ -25,11 +25,17 @@
                     <div class="resultados-detalhes">
                         <p>RESULTADOS DA VALIDAÇÃO:</p>
                         <p>Patrimônios em ambas as fontes: <span id="total-ambos">0</span></p>
-                        <p>Patrimônios apenas no PDF: <span id="total-pdf">0</span></p>
+                        <p>Patrimônios apenas no PDF (Geral): <span id="total-pdf">0</span></p>
                         <p>Patrimônios apenas no Excel: <span id="total-excel-only">0</span></p>
                     </div>
 
-                    <div id="exemplos-container" class="exemplos-section">
+                    <!-- Nova seção para patrimônios agrupados -->
+                    <div id="patrimonios-agrupados-container" class="exemplos-section" style="display: none;">
+                        <p>Patrimônios Agrupados por Item Material (do PDF):</p>
+                        <ul id="patrimonios-agrupados-lista"></ul>
+                    </div>
+
+                    <div id="exemplos-container" class="exemplos-section" style="display: none;">
                         <p>Exemplos de patrimônios que estão apenas no Excel:</p>
                         <ul id="exemplos-lista"></ul>
                     </div>
@@ -45,7 +51,7 @@
                 <div id="form-content">
                     <!-- Área para Planilha -->
                     <div class="drop-area" id="excelDropArea">
-                        <img src="{{ url_for('static', filename='excel-icon.png') }}" alt="Excel" class="file-icon" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2NjMDAwMCI+PHBhdGggZD0iTTE0IDJIMWExIDEgMCAwIDAtMSAxdjE4YTEgMSAwIDAgMCAxIDFoMjJhMSAxIDAgMCAwIDEtMVY4VjdabTUgMTZoLTh2MUg1VjVoN3YzaDd2MTBabS0zLTloLTRWNWw0IDR6Ij48L3BhdGg+PC9zdmc+'; this.style.width='36px';">
+                        <img src="{{ url_for('static', filename='images/excel-icon.png') }}" alt="Excel" class="file-icon" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2NjMDAwMCI+PHBhdGggZD0iTTE0IDJIMWExIDEgMCAwIDAtMSAxdjE4YTEgMSAwIDAgMCAxIDFoMjJhMSAxIDAgMCAwIDEtMVY4VjdabTUgMTZoLTh2MUg1VjVoN3YzaDd2MTBabS0zLTloLTRWNWw0IDR6Ij48L3BhdGg+PC9zdmc+"; this.style.width='36px';">
                         <span>Arraste a planilha Excel/ODS aqui ou</span>
                         <input type="file" id="excelInput" name="excel" accept=".xlsx,.xls,.ods" hidden>
                         <button type="button" class="btn" onclick="document.getElementById('excelInput').click()">
@@ -56,7 +62,7 @@
 
                     <!-- Área para PDF -->
                     <div class="drop-area" id="pdfDropArea">
-                        <img src="{{ url_for('static', filename='pdf-icon.png') }}" alt="PDF" class="file-icon" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2NjMDAwMCI+PHBhdGggZD0iTTIwIDJIOGMtMS4xIDAtMiAuOS0yIDJ2MTJjMCAxLjEuOSAyIDIgMmgxMmMxLjEgMCAyLS45IDItMlY0YzAtMS4xLS45LTItMi0yek00IDRjLTEuMSAwLTIgLjktMiAydjE0YzAgMS4xLjkgMiAyIDJoMTRjMS4xIDAgMi0uOSAyLTJ2LTJIOGMtMi4yIDAtNC0xLjgtNC00VjR6Ij48L3BhdGg+PC9zdmc+'; this.style.width='36px';">
+                        <img src="{{ url_for('static', filename='images/pdf-icon.png') }}" alt="PDF" class="file-icon" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2NjMDAwMCI+PHBhdGggZD0iTTIwIDJIOGMtMS4xIDAtMiAuOS0yIDJ2MTJjMCAxLjEuOSAyIDIgMmgxMmMxLjEgMCAyLS45IDItMlY0YzAtMS4xLS45LTItMi0yek00IDRjLTEuMSAwLTIgLjktMiAydjE十四YzAgMS4xLjkgMiAyIDJoMTRjMS4xIDAgMi0uOSAyLTJ2LTJIOGMtMi4yIDAtNC0xLjgtNC00VjR6Ij48L3BhdGg+PC9zdmc+'; this.style.width='36px';">
                         <span>Arraste o arquivo PDF aqui ou</span>
                         <input type="file" id="pdfInput" name="pdf" accept=".pdf" hidden>
                         <button type="button" class="btn" onclick="document.getElementById('pdfInput').click()">
@@ -148,17 +154,36 @@
             // Preencher valores
             document.getElementById('total-excel').textContent = data.total_excel;
             document.getElementById('total-ambos').textContent = data.total_ambos;
-            document.getElementById('total-pdf').textContent = data.total_somente_pdf;
+            document.getElementById('total-pdf').textContent = data.total_somente_pdf; // Este é o total de patrimônios *apenas* no PDF
             document.getElementById('total-excel-only').textContent = data.total_somente_excel;
 
-            // Controlar exibição dos exemplos
+            // Exibir patrimônios agrupados por item material
+            const agrupadosContainer = document.getElementById('patrimonios-agrupados-container');
+            const agrupadosLista = document.getElementById('patrimonios-agrupados-lista');
+            agrupadosLista.innerHTML = ''; // Limpar lista anterior
+
+            if (data.patrimonios_agrupados_pdf && data.patrimonios_agrupados_pdf.length > 0 && data.patrimonios_agrupados_pdf[0] !== "Nenhum patrimônio agrupado encontrado no PDF.") {
+                data.patrimonios_agrupados_pdf.forEach(item_agrupado_str => {
+                    const li = document.createElement('li');
+                    li.textContent = item_agrupado_str; // Formato: "Item X: P1, P2, P3"
+                    agrupadosLista.appendChild(li);
+                });
+                agrupadosContainer.style.display = 'block';
+            } else {
+                const li = document.createElement('li');
+                li.textContent = 'Nenhum patrimônio agrupado encontrado no PDF.';
+                agrupadosLista.appendChild(li);
+                agrupadosContainer.style.display = 'block'; // Mostrar mesmo se vazio, com a mensagem
+            }
+
+            // Controlar exibição dos exemplos de "somente no Excel"
             const exemplosContainer = document.getElementById('exemplos-container');
+            const exemplosLista = document.getElementById('exemplos-lista');
+            exemplosLista.innerHTML = ''; // Limpar lista anterior
 
-            // Mostrar exemplos somente se houver patrimônios apenas no PDF
-            if (data.mostrar_exemplos && data.exemplos_excel && data.exemplos_excel.length > 0) {
-                const exemplosLista = document.getElementById('exemplos-lista');
-                exemplosLista.innerHTML = '';
-
+            // A lógica original era `data.mostrar_exemplos && data.exemplos_excel && data.exemplos_excel.length > 0`
+            // `mostrar_exemplos` era `len(somente_pdf) > 0`. Vamos manter uma lógica similar, mas baseada nos dados de `somente_excel`.
+            if (data.total_somente_excel > 0 && data.exemplos_excel && data.exemplos_excel.length > 0) {
                 data.exemplos_excel.forEach(exemplo => {
                     const li = document.createElement('li');
                     li.textContent = '- ' + exemplo;
@@ -205,7 +230,7 @@
             document.getElementById('validateBtn').disabled = true;
 
             try {
-                // Usando fetch com cabeçalho AJAX
+                // Usando fetch com cabeçalho AJAX para obter o JSON de resumo
                 const response = await fetch('/', {
                     method: 'POST',
                     body: formData,
@@ -214,23 +239,24 @@
                     }
                 });
 
-                // Esconder loading
                 document.getElementById('loading').style.display = 'none';
 
                 if (response.ok) {
                     const contentType = response.headers.get('Content-Type');
 
                     if (contentType && contentType.includes('application/json')) {
-                        // Resposta JSON (resumo)
                         const jsonData = await response.json();
 
                         if (jsonData.success) {
                             showResults(jsonData.resumo);
 
-                            // Fazer uma segunda requisição para baixar o arquivo
+                            // Fazer uma segunda requisição para baixar o arquivo Excel
+                            // É importante criar um novo FormData, pois o anterior pode ter sido consumido
+                            const downloadFormData = new FormData(document.getElementById('uploadForm'));
                             const downloadResponse = await fetch('/', {
                                 method: 'POST',
-                                body: formData
+                                body: downloadFormData
+                                // Não precisa do header X-Requested-With aqui, pois esperamos um arquivo
                             });
 
                             if (downloadResponse.ok) {
@@ -238,39 +264,38 @@
                                 const url = window.URL.createObjectURL(blob);
                                 const a = document.createElement('a');
                                 a.href = url;
-                                a.download = 'resultado_validacao.xlsx';
+                                // O nome do arquivo é definido no backend
+                                const contentDisposition = downloadResponse.headers.get('content-disposition');
+                                let filename = 'resultado_validacao.xlsx'; // Nome padrão
+                                if (contentDisposition) {
+                                    const filenameMatch = contentDisposition.match(/filename="?(.+?)"?$/i);
+                                    if (filenameMatch && filenameMatch.length > 1) {
+                                        filename = filenameMatch[1];
+                                    }
+                                }
+                                a.download = filename;
                                 document.body.appendChild(a);
                                 a.click();
                                 document.body.removeChild(a);
+                                window.URL.revokeObjectURL(url); // Liberar o objeto URL
 
-                                // Configurar link de backup para download
-                                document.getElementById('download-link').href = url;
+                                document.getElementById('download-link').href = url; // O URL do blob pode não ser reutilizável assim, mas o download já ocorreu.
+                                                                                // Para um link de re-download, seria melhor armazenar o blob ou refazer a requisição.
                             } else {
-                                throw new Error('Erro ao gerar o arquivo de download');
+                                const errorText = await downloadResponse.text();
+                                showError('Erro ao gerar o arquivo de download: ' + (errorText || downloadResponse.status));
                             }
                         } else {
-                            showError(jsonData.erro || 'Erro na validação');
+                            showError(jsonData.erro || 'Erro na validação dos dados.');
                         }
                     } else {
-                        // Resposta direta (arquivo)
-                        const blob = await response.blob();
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = 'resultado_validacao.xlsx';
-                        a.click();
-
-                        // Mostrar mensagem genérica de sucesso
-                        showResults({
-                            total_excel: 'N/A',
-                            total_ambos: 'N/A',
-                            total_somente_pdf: 'N/A',
-                            total_somente_excel: 'N/A',
-                            exemplos_excel: []
-                        });
+                         // Se não for JSON, pode ser um erro HTML ou um download direto inesperado
+                        const errorText = await response.text();
+                        showError('Resposta inesperada do servidor. Detalhes: ' + errorText.substring(0, 200));
                     }
                 } else {
-                    showError('Erro no servidor: ' + response.status);
+                    const errorText = await response.text();
+                    showError('Erro no servidor: ' + response.status + '. Detalhes: ' + errorText.substring(0,200));
                 }
             } catch (error) {
                 document.getElementById('loading').style.display = 'none';
