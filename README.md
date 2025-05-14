@@ -41,15 +41,16 @@ https://validarpdf2.pythonanywhere.com/
 - Validação de formato dos números de patrimônio (9 dígitos)
 
 ### Análise Comparativa
-- Identificação de patrimônios presentes em ambas as fontes
+- Identificação de patrimônios presentes em ambas as fontes agrupados por "Código de item material"
 - Detecção de patrimônios exclusivos do Excel
 - Detecção de patrimônios exclusivos do PDF
 - Geração de estatísticas detalhadas
 
 ### Relatório de Resultados
-- Planilha Excel com múltiplas abas:
+  - Planilha Excel com múltiplas abas:
   - Resumo geral
   - Lista de exemplos
+  - Patrimônios por item (PDF)
   - Patrimônios em ambas as fontes
   - Patrimônios exclusivos do Excel
   - Patrimônios exclusivos do PDF
@@ -118,8 +119,8 @@ Para suporte e dúvidas:
 
 ## 📝 Notas de Versão
 
-### Versão 1.3
-- Interface responsiva aprimorada
-- Melhor feedback visual durante o processamento
-- Suporte a arquivos OpenDocument (.ods)
-- Relatório Excel mais detalhado
+### Versão 2.1 
+- Agrupamento Inteligente por Item Material: Os patrimónios extraídos do PDF são agora automaticamente agrupados pelo "Código de Item Material" correspondente, facilitando a análise e conferência.
+- Relatório Excel Detalhado com Agrupamentos: O ficheiro Excel gerado (resultado_comparacao_patrimonios.xlsx) inclui uma nova folha dedicada ("Patrimonios por Item (PDF)") que apresenta claramente os códigos de item material e os seus respetivos números de património associados.
+- Feedback de Processamento: Mantido o feedback visual durante o processamento dos ficheiros.
+- Resposta da API Enriquecida: A resposta interna da aplicação (JSON) foi atualizada para incluir os dados de patrimónios agrupados.
