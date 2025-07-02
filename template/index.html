@@ -51,7 +51,7 @@
                 <div id="form-content">
                     <!-- Área para Planilha -->
                     <div class="drop-area" id="excelDropArea">
-                        <img src="{{ url_for('static', filename='images/excel-icon.png') }}" alt="Excel" class="file-icon" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2NjMDAwMCI+PHBhdGggZD0iTTE0IDJIMWExIDEgMCAwIDAtMSAxdjE4YTEgMSAwIDAgMCAxIDFoMjJhMSAxIDAgMCAwIDEtMVY4VjdabTUgMTZoLTh2MUg1VjVoN3YzaDd2MTBabS0zLTloLTRWNWw0IDR6Ij48L3BhdGg+PC9zdmc+"; this.style.width='36px';">
+                        <img src="{{ url_for('static', filename='excel-icon.png') }}" alt="Excel" class="file-icon" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2NjMDAwMCI+PHBhdGggZD0iTTE0IDJIMWExIDEgMCAwIDAtMSAxdjE4YTEgMSAwIDAgMCAxIDFoMjJhMSAxIDAgMCAwIDEtMVY4VjdabTUgMTZoLTh2MUg1VjVoN3YzaDd2MTBabS0zLTloLTRWNWw0IDR6Ij48L3BhdGg+PC9zdmc+"; this.style.width='36px';">
                         <span>Arraste a planilha Excel/ODS aqui ou</span>
                         <input type="file" id="excelInput" name="excel" accept=".xlsx,.xls,.ods" hidden>
                         <button type="button" class="btn" onclick="document.getElementById('excelInput').click()">
@@ -62,7 +62,7 @@
 
                     <!-- Área para PDF -->
                     <div class="drop-area" id="pdfDropArea">
-                        <img src="{{ url_for('static', filename='images/pdf-icon.png') }}" alt="PDF" class="file-icon" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2NjMDAwMCI+PHBhdGggZD0iTTIwIDJIOGMtMS4xIDAtMiAuOS0yIDJ2MTJjMCAxLjEuOSAyIDIgMmgxMmMxLjEgMCAyLS45IDItMlY0YzAtMS4xLS45LTItMi0yek00IDRjLTEuMSAwLTIgLjktMiAydjE十四YzAgMS4xLjkgMiAyIDJoMTRjMS4xIDAgMi0uOSAyLTJ2LTJIOGMtMi4yIDAtNC0xLjgtNC00VjR6Ij48L3BhdGg+PC9zdmc+'; this.style.width='36px';">
+                        <img src="{{ url_for('static', filename='pdf-icon.png') }}" alt="PDF" class="file-icon" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2NjMDAwMCI+PHBhdGggZD0iTTIwIDJIOGMtMS4xIDAtMiAuOS0yIDJ2MTJjMCAxLjEuOSAyIDIgMmgxMmMxLjEgMCAyLS45IDItMlY0YzAtMS4xLS45LTItMi0yek00IDRjLTEuMSAwLTIgLjktMiAydjE十四YzAgMS4xLjkgMiAyIDJoMTRjMS4xIDAgMi0uOSAyLTJ2LTJIOGMtMi4yIDAtNC0xLjgtNC00VjR6Ij48L3BhdGg+PC9zdmc+'; this.style.width='36px';">
                         <span>Arraste o arquivo PDF aqui ou</span>
                         <input type="file" id="pdfInput" name="pdf" accept=".pdf" hidden>
                         <button type="button" class="btn" onclick="document.getElementById('pdfInput').click()">
